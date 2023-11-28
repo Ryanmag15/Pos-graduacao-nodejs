@@ -2,6 +2,7 @@ require('dotenv').config()
 const express = require('express');
 const morgan = require('morgan');
 const app = express();
+const apiV1Router = express.Router();
 
 app.use(morgan('dev'));
 app.use(express.json());
@@ -106,9 +107,6 @@ let produtos = [
   }
 ]
 
-const apiV1Router = require('./routes/apiV1Router')
-app.use('api/v1', apiV1Router)
-
 apiV1Router.use((req, res, next) => {
   console.log(`Data: ${new Date()} - Method: ${req.method} - URL: ${req.url}`);
   next();
@@ -123,10 +121,10 @@ apiV1Router.use((req, res, next) => {
 
 apiV1Router.get('/', (req, res) => {
   res.send(`Hello to API World<br>
-        <a href="/api/produtos">API de Produtos</a>`);
+        <a href="/api/v1/produtos">API de Produtos</a>`);
 });
 
-apiV1Router.get('/api/produtos', (req, res) => {
+apiV1Router.get('/produtos', (req, res) => {
   let sort = req.query.sort;
   if (sort) {
     produtosOrdenados = produtos.sort((a, b) => a[sort].localeCompare(b[sort]));
@@ -136,7 +134,7 @@ apiV1Router.get('/api/produtos', (req, res) => {
   }
 });
 
-apiV1Router.get('/api/produtos/:id', (req, res) => {
+apiV1Router.get('/produtos/:id', (req, res) => {
   let id = parseInt(req.params.id);
   let produto = produtos.find(p => p.id === id);
   if (produto) {
@@ -146,7 +144,7 @@ apiV1Router.get('/api/produtos/:id', (req, res) => {
   }
 });
 
-apiV1Router.post('/api/produtos', express.json(), (req, res) => {
+apiV1Router.post('/produtos', express.json(), (req, res) => {
   const novoProduto = req.body;
 
   if (novoProduto && novoProduto.nome && novoProduto.marca && novoProduto.descricao && novoProduto.preco && novoProduto.quantidade_em_estoque) {
@@ -158,7 +156,7 @@ apiV1Router.post('/api/produtos', express.json(), (req, res) => {
   }
 });
 
-apiV1Router.put('/api/produtos/:id', express.json(), (req, res) => {
+apiV1Router.put('/produtos/:id', express.json(), (req, res) => {
   const id = parseInt(req.params.id);
   const produtoIndex = produtos.findIndex(p => p.id === id);
 
@@ -170,7 +168,7 @@ apiV1Router.put('/api/produtos/:id', express.json(), (req, res) => {
   }
 });
 
-apiV1Router.delete('/api/produtos/:id', (req, res) => {
+apiV1Router.delete('/produtos/:id', (req, res) => {
   const id = parseInt(req.params.id);
   const produtoIndex = produtos.findIndex(p => p.id === id);
   if (produtoIndex !== -1) {
@@ -183,11 +181,6 @@ apiV1Router.delete('/api/produtos/:id', (req, res) => {
 
 apiV1Router.use((req, res) => {
   res.status(404).send(`<h2>Erro 404 - Recurso não encontrado</h2>`);
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
 });
 
 module.exports = apiV1Router;
