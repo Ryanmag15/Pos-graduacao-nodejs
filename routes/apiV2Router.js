@@ -77,3 +77,4 @@ apiV2Router.delete('/produtos/:id', async (req, res) => {
 });
 
 module.exports = apiV2Router;
+
