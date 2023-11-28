@@ -13,10 +13,11 @@ module.exports = {
     migrations: {
       directory: './db/migrations'
     },
-
     seeds: {
       directory: './db/seeds'
-    }
+    },
+    useNullAsDefault: true // Add this line to suppress the warning
+
   },
 
   production: {
