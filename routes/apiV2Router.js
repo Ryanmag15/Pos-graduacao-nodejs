@@ -3,6 +3,11 @@ const apiV2Router = express.Router();
 const knexConfig = require('../knexfile')[process.env.NODE_ENV || 'development'];
 const knex = require('knex')(knexConfig);
 
+apiV1Router.get('/', (req, res) => {
+  res.send(`Hello to API World<br>
+        <a href="/api/v2/produtos">API de Produtos</a>`);
+});
+
 apiV2Router.get('/produtos', async (req, res) => {
   try {
     const result = await knex.select('id', 'descricao', 'marca', 'valor').from('produtos');
