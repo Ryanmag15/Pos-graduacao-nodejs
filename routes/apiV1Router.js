@@ -124,11 +124,6 @@ apiV1Router.get('/', (req, res) => {
         <a href="/api/v1/produtos">API de Produtos</a>`);
 });
 
-apiV2Router.get('/', (req, res) => {
-  res.send(`API V2<br>
-        <a href="/api/v2/produtos">API de Produtos</a>`);
-});
-
 apiV1Router.get('/produtos', (req, res) => {
   let sort = req.query.sort;
   if (sort) {

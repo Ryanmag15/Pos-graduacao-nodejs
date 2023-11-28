@@ -3,11 +3,6 @@ const apiV2Router = express.Router();
 const knexConfig = require('../knexfile')[process.env.NODE_ENV || 'development'];
 const knex = require('knex')(knexConfig);
 
-apiV1Router.get('/', (req, res) => {
-  res.send(`API V1<br>
-        <a href="/api/v1/produtos">API de Produtos</a>`);
-});
-
 apiV2Router.get('/', (req, res) => {
   res.send(`API V2<br>
         <a href="/api/v2/produtos">API de Produtos</a>`);
