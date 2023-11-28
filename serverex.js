@@ -8,14 +8,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const apiV1Router = require('./routes/apiV1Router');
-const apiV2Router = require('./routes/apiV2Router');
-
 app.use('/api/v1', apiV1Router);
-app.use('/api/v2', apiV2Router);
 
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
+const apiV2Router = require('./routes/apiV2Router');
+app.use('/api/v2', apiV2Router);
 
 app.use((req, res, next) => {
   console.log(`Data: ${new Date()} - Method: ${req.method} - URL: ${req.url}`);
