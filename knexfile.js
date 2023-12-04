@@ -16,24 +16,26 @@ module.exports = {
     seeds: {
       directory: './db/seeds'
     },
-    useNullAsDefault: true // Add this line to suppress the warning
-
+    useNullAsDefault: true 
   },
 
   production: {
-    client: 'postgresql',
+    client: 'pg',
     connection: {
-      database: 'my_db',
-      user: 'username',
-      password: 'password'
+      database: 'postgres',
+      user: 'postgres',
+      password: 'root'
     },
     pool: {
       min: 2,
       max: 10
     },
     migrations: {
-      tableName: 'knex_migrations'
-    }
+      directory: './db/migrations'
+    },
+    seeds: {
+      directory: './db/seeds'
+    },
   }
 
 };
