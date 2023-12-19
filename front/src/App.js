@@ -14,6 +14,8 @@ const App = () => {
   const [authenticated, setAuthenticated] = useState(!!sessionStorage.getItem('token'));
   const [selectedUser, setSelectedUser] = useState(null);
 
+  const baseUrl = "https://api-node-gq73.onrender.com"
+  
   useEffect(() => {
     if (authenticated) {
       const token = sessionStorage.getItem('token');
