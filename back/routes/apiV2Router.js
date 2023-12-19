@@ -2,13 +2,25 @@ const express = require('express');
 const apiV2Router = express.Router();
 const knexConfig = require('../knexfile')[process.env.NODE_ENV || 'development'];
 const knex = require('knex')(knexConfig);
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+
+const checkToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+
+  if (!authHeader) {
+    return res.status(401).json({ error: 'Token não fornecido' });
+  }
+  next();
+};
+
 
 apiV2Router.get('/', (req, res) => {
   res.send(`API V2<br>
         <a href="/api/v2/users">API de Users</a>`);
 });
 
-apiV2Router.get('/users', async (req, res) => {
+apiV2Router.get('/users', checkToken, async (req, res) => {
   try {
     const result = await knex.select('id', 'login', 'senha', 'nome', 'numero').from('users');
     res.status(200).json(result);
@@ -35,13 +47,18 @@ apiV2Router.post('/users', async (req, res) => {
   const newUser = req.body;
 
   try {
+    const hashedPassword = await bcrypt.hash(newUser.senha, 10);
+    newUser.senha = hashedPassword;
+
     const [id] = await knex('users').insert(newUser);
     const userInserted = await knex.select('id', 'login', 'senha', 'nome', 'numero').from('users').where({ id: id }).first();
+
     res.status(201).json({ mensagem: 'Usuário adicionado com sucesso.', user: userInserted });
   } catch (error) {
     res.status(400).json({ erro: 'Os dados do usuário são obrigatórios.' });
   }
 });
+
 
 apiV2Router.put('/users/:id', async (req, res) => {
   const { id } = req.params;
@@ -75,7 +92,6 @@ apiV2Router.delete('/users/:id', async (req, res) => {
     res.status(500).json({ erro: 'Erro ao remover o usuário do banco de dados.' });
   }
 });
-
 
 module.exports = apiV2Router;
 
