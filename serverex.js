@@ -15,11 +15,8 @@ app.use(cors());
 
 app.use(express.static(path.join(__dirname, 'src')));
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'src', 'login.html'));
-});
-// const apiV1Router = require('./routes/apiV1Router');
-// app.use('/api/v1', apiV1Router);
+const apiV1Router = require('./routes/apiV1Router');
+app.use('/api/v1', apiV1Router);
 
 const apiV2Router = require('./routes/apiV2Router');
 app.use('/api/v2', apiV2Router);
@@ -27,6 +24,9 @@ app.use('/api/v2', apiV2Router);
 const apiSeg = require('./routes/apiSeg');
 app.use('/api/apiSeg', apiSeg);
 
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'src', 'login.html'));
+});
 
 app.use((req, res, next) => {
   console.log(`Data: ${new Date()} - Method: ${req.method} - URL: ${req.url}`);
