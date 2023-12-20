@@ -45,7 +45,7 @@
     </div>
 
     <script>
-        const BASE_URL = "http://localhost:3001/api/v2/users";
+        const BASE_URL = "https://api-node-gq73.onrender.com/api/v2/users";
 
         document.addEventListener("DOMContentLoaded", () => {
             loadUsers();
@@ -90,11 +90,8 @@
         }
 
         function obterTokenDaSessao() {
-            // Lógica para obter o token da sessão, por exemplo, de um cookie
-            // Substitua isso com a lógica específica do seu aplicativo
 
-            // Exemplo de obtenção do token de uma sessão:
-            const token = sessionStorage.getItem('token'); // Supondo que o token esteja armazenado em sessionStorage
+            const token = sessionStorage.getItem('token');
 
             return token;
         }
