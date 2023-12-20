@@ -121,7 +121,7 @@ apiV1Router.use((req, res, next) => {
 
 apiV1Router.get('/', (req, res) => {
   res.send(`API V1<br>
-        <a href="/produtos">API de Produtos</a>`);
+        <a href="/api/v1/produtos">API de Produtos</a>`);
 });
 
 apiV1Router.get('/produtos', (req, res) => {
