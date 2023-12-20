@@ -22,7 +22,7 @@ apiV2Router.get('/', (req, res) => {
 
 apiV2Router.get('/users', checkToken, async (req, res) => {
   try {
-    const result = await knex.select('id', 'login', 'senha', 'nome', 'numero').from('users');
+    const result = await knex.select('id', 'login', 'senha', 'nome', 'email', 'roles', 'numero').from('users');
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ erro: 'Erro ao recuperar os usuários do banco de dados.' });

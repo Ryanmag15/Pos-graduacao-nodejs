@@ -1,7 +1,10 @@
 require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
-const cors = require('cors'); 
+const cors = require('cors');
+const path = require('path'); // Adicionando o módulo path
+const BASE_URL = process.env.BASE_URL || 'http://localhost:3001';
+
 const app = express();
 
 app.use(morgan('dev'));
@@ -9,6 +12,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cors());
+
+app.use(express.static(path.join(__dirname, 'src')));
 
 const apiV1Router = require('./routes/apiV1Router');
 app.use('/api/v1', apiV1Router);
@@ -20,8 +25,7 @@ const apiSeg = require('./routes/apiSeg');
 app.use('/api/apiSeg', apiSeg);
 
 app.get('/', (req, res) => {
-  // res.redirect('/api/v1'); 
-  // res.redirect('/api/v1'); 
+  res.sendFile(path.join(__dirname, 'src', 'login.html'));
 });
 
 app.use((req, res, next) => {
@@ -30,7 +34,7 @@ app.use((req, res, next) => {
 });
 
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*'); 
+  res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();

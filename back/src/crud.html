@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Frontend</title>
+</head>
+
+<body>
+
+    <h1>CRUD Frontend</h1>
+
+    <div id="userList">
+        <h2>Lista de Usuários</h2>
+        <ul id="users"></ul>
+    </div>
+
+    <div id="userForm">
+        <h2>Adicionar/Editar Usuário</h2>
+        <form id="crudForm">
+            <label for="login">Login:</label>
+            <input type="text" id="login" required>
+
+            <label for="senha">Senha:</label>
+            <input type="password" id="senha" required>
+
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" required>
+
+            <label for="roles">Roles:</label>
+            <select id="roles" required>
+                <option value="admin">Admin</option>
+                <option value="user">User</option>
+            </select>
+
+            <label for="numero">Número:</label>
+            <input type="text" id="numero">
+
+            <button type="submit">Salvar</button>
+        </form>
+    </div>
+
+    <script>
+        const BASE_URL = "http://localhost:3001/api/v2/users";
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadUsers();
+            const form = document.getElementById("crudForm");
+            form.addEventListener("submit", handleFormSubmit);
+        });
+
+        async function loadUsers() {
+            const usersElement = document.getElementById("users");
+            usersElement.innerHTML = "";
+
+            try {
+                const token = obterTokenDaSessao();
+
+                const response = await fetch(BASE_URL, {
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                    },
+                });
+
+                const users = await response.json();
+                users.forEach(user => {
+                    const listItem = document.createElement("li");
+                    listItem.textContent = `${user.nome} - ${user.login} - ${user.numero}`;
+
+                    const editButton = document.createElement("button");
+                    editButton.textContent = "Editar";
+                    editButton.addEventListener("click", () => editUser(user.id));
+
+                    const deleteButton = document.createElement("button");
+                    deleteButton.textContent = "Excluir";
+                    deleteButton.addEventListener("click", () => deleteUser(user.id));
+
+                    listItem.appendChild(editButton);
+                    listItem.appendChild(deleteButton);
+
+                    usersElement.appendChild(listItem);
+                });
+            } catch (error) {
+                console.error("Erro ao carregar usuários:", error);
+            }
+        }
+
+        function obterTokenDaSessao() {
+            // Lógica para obter o token da sessão, por exemplo, de um cookie
+            // Substitua isso com a lógica específica do seu aplicativo
+
+            // Exemplo de obtenção do token de uma sessão:
+            const token = sessionStorage.getItem('token'); // Supondo que o token esteja armazenado em sessionStorage
+
+            return token;
+        }
+
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+
+            const login = document.getElementById("login").value;
+            const senha = document.getElementById("senha").value;
+            const nome = document.getElementById("nome").value;
+            const email = document.getElementById("email").value;
+            const roles = document.getElementById("roles").value;
+            const numero = document.getElementById("numero").value;
+
+            const user = {
+                login,
+                senha,
+                nome,
+                email,
+                roles,
+                numero,
+            };
+
+            try {
+                const token = obterTokenDaSessao();
+                let response;
+
+                if (user.id) {
+                    response = await fetch(`${BASE_URL}/${user.id}`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`,
+                        },
+                        body: JSON.stringify(user),
+                    });
+                } else {
+                    response = await fetch(BASE_URL, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`,
+                        },
+                        body: JSON.stringify(user),
+                    });
+                }
+
+                if (response.ok) {
+                    form.reset();
+                    loadUsers();
+                } else {
+                    console.error("Erro ao salvar usuário:", response.statusText);
+                }
+            } catch (error) {
+                console.error("Erro ao salvar usuário:", error);
+            }
+        }
+
+        async function editUser(userId) {
+            try {
+                const token = obterTokenDaSessao();
+                const response = await fetch(`${BASE_URL}/${userId}`, {
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                    },
+                });
+
+                if (response.ok) {
+                    const user = await response.json();
+                    // Preencher o formulário com os dados do usuário para edição
+                    document.getElementById("login").value = user.login;
+                    document.getElementById("senha").value = user.senha;
+                    document.getElementById("nome").value = user.nome;
+                    document.getElementById("email").value = user.email;
+                    document.getElementById("roles").value = user.roles;
+                    document.getElementById("numero").value = user.numero;
+
+                    // Adicionar um campo oculto para armazenar o ID do usuário
+                    const userIdInput = document.createElement("input");
+                    userIdInput.type = "hidden";
+                    userIdInput.id = "userId";
+                    userIdInput.value = user.id;
+                    form.appendChild(userIdInput);
+                } else {
+                    console.error("Erro ao obter dados do usuário:", response.statusText);
+                }
+            } catch (error) {
+                console.error("Erro ao obter dados do usuário:", error);
+            }
+        }
+
+        async function deleteUser(userId) {
+            try {
+                const token = obterTokenDaSessao();
+                const response = await fetch(`${BASE_URL}/${userId}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                    },
+                });
+
+                if (response.ok) {
+                    loadUsers();
+                } else {
+                    console.error("Erro ao excluir usuário:", response.statusText);
+                }
+            } catch (error) {
+                console.error("Erro ao excluir usuário:", error);
+            }
+        }
+    </script>
+
+</body>
+
+</html>
